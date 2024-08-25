@@ -69,12 +69,15 @@ func child() {
 
 	must(syscall.Sethostname([]byte("mycontainer")))
 	must(syscall.Chroot("/home/datasigntist/ubuntu_fs"))
-	must(syscall.Chdir("/"))
-
-	//containerFilePath := "/"
-	//must(os.Mkdir(filepath.Join(containerFilePath, "myContainer"), 0777))
 
 	must(syscall.Mount("proc", "/proc", "proc", 0, ""))
+
+	if _, err := os.Stat("myContainerTemp"); os.IsNotExist(err) {
+		must(os.Mkdir("myContainerTemp", os.ModePerm))
+	}
+	must(syscall.Mount("something", "myContainerTemp", "tmpfs", 0, ""))
+
+	must(syscall.Chdir("/myContainerTemp"))
 
 	must(cmd.Run())
 
