@@ -69,6 +69,7 @@ func child() {
 
 	must(syscall.Sethostname([]byte("mycontainer")))
 	must(syscall.Chroot("/home/datasigntist/ubuntu_fs"))
+	must(syscall.Chdir("/"))
 
 	must(syscall.Mount("proc", "/proc", "proc", 0, ""))
 
@@ -77,11 +78,11 @@ func child() {
 	}
 	must(syscall.Mount("something", "myContainerTemp", "tmpfs", 0, ""))
 
-	must(syscall.Chdir("/myContainerTemp"))
-
 	must(cmd.Run())
 
 	must(syscall.Unmount("/proc", 0))
+	must(syscall.Unmount("/myContainerTemp", 0))
+
 }
 
 func must(err error) {
